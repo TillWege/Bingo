@@ -7,8 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
+model BingoField {
   id        Int      @id @default(autoincrement())
   name      String
   author    String
+  context   String  @default("")
 }

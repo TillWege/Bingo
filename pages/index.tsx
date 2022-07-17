@@ -1,27 +1,53 @@
-import { Avatar, Button, Input, useTheme } from '@nextui-org/react'
+import { Button, Collapse, Input } from '@nextui-org/react'
+import { BingoField, PrismaClient } from '@prisma/client'
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import Entry from '../components/entry'
 import styles from '../styles/Home.module.css'
 
-const Home: NextPage = () => {  
+interface IndexPropy {
+  fields: BingoField[]
+}
 
-  const theme = useTheme();
-  theme.isDark = true;
-
+const Home: NextPage<IndexPropy> = (props) => {  
   return (
     <>
-      <div>Bingo-Board Creator</div>
+      <div className={styles.container}>
+      <h1>Bingo-Board Creator</h1>
       <hr></hr>
-      <h1>Einträge</h1>
-      <h2>Eintrag 1:</h2>
+      <h2>Einträge</h2>
+      </div>
+      
+      <Collapse.Group>
+        {props.fields.map((field)=>{
+          return Entry(field)
+        })}
+      </Collapse.Group>
+
       <hr></hr>
-      <Input></Input>
-      <Button>Add Entry</Button>
-      <hr></hr>
-      <Button>Create Board</Button>
+      <div className={styles.buttons}>
+        <h2>Eintrag</h2>
+        <Input></Input>
+        <h2>Kontext</h2>
+        <Input></Input>
+        <h2>Author</h2>
+        <Input></Input>
+        <br></br>
+        <Button>Eintrag hinzufügen</Button>
+        <br></br>
+        <Button>Zufälliges Board erstellen</Button>
+
+      </div>
     </>
   )
 }
 
 export default Home
+
+export async function getServerSideProps(context: any) {
+  const prisma = new PrismaClient()
+  let fields = await prisma.bingoField.findMany()
+
+  return {
+    props: {fields}
+  }
+}
