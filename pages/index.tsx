@@ -1,22 +1,42 @@
 import { Button, Collapse, Input } from '@nextui-org/react'
-import { BingoField, PrismaClient } from '@prisma/client'
+import { BingoField } from '@prisma/client'
 import type { NextPage } from 'next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { Database } from '../common/database'
 import Entry from '../components/entry'
 import styles from '../styles/Home.module.css'
 
-interface IndexPropy {
+interface IndexProp {
   fields: BingoField[]
 }
 
-const Home: NextPage<IndexPropy> = (props) => {  
+const Home: NextPage<IndexProp> = (props) => {  
+  let data = {} as BingoField
+
+  const router = useRouter();
+
+  const refreshData = () => {
+    router.replace(router.asPath);
+  }
+
+  async function submitField(){
+    const result = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/entry`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    })
+    if(result.status==200){
+      refreshData()
+      data = {} as BingoField
+    }else{
+      alert('Error while adding new Entry')
+      console.log(result.json);
+      
+    }
+  }
   return (
     <>
-      <div className={styles.container}>
-      <h1>Bingo-Board Creator</h1>
-      <hr></hr>
-      <h2>Einträge</h2>
-      </div>
-      
+      <h2 className={styles.container}>Einträge</h2>
       <Collapse.Group>
         {props.fields.map((field)=>{
           return Entry(field)
@@ -24,18 +44,19 @@ const Home: NextPage<IndexPropy> = (props) => {
       </Collapse.Group>
 
       <hr></hr>
-      <div className={styles.buttons}>
+      <div className={styles.buttons} key="1">
         <h2>Eintrag</h2>
-        <Input></Input>
+        <Input aria-label='Name Input' onChange={(event)=>{data.name = event.target.value}}></Input>
         <h2>Kontext</h2>
-        <Input></Input>
+        <Input aria-label='Context Input' onChange={(event)=>{data.context = event.target.value}}></Input>
         <h2>Author</h2>
-        <Input></Input>
+        <Input aria-label='Author Input' onChange={(event)=>{data.author = event.target.value}}></Input>
         <br></br>
-        <Button>Eintrag hinzufügen</Button>
+        <Button aria-label='Add Entry Button' onPress={submitField}>Eintrag hinzufügen</Button>
         <br></br>
-        <Button>Zufälliges Board erstellen</Button>
-
+        <Link href='/board'>
+          <Button aria-label='Generate Board button'>Zufälliges Board erstellen</Button>
+        </Link>
       </div>
     </>
   )
@@ -44,8 +65,7 @@ const Home: NextPage<IndexPropy> = (props) => {
 export default Home
 
 export async function getServerSideProps(context: any) {
-  const prisma = new PrismaClient()
-  let fields = await prisma.bingoField.findMany()
+  let fields = await Database.bingoField.findMany()
 
   return {
     props: {fields}

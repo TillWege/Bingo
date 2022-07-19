@@ -1,0 +1,20 @@
+.board {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    column-gap: 1rem;
+    row-gap: 1rem;
+}
+
+.field {
+    background-color: gray;
+}
+
+.field>p {
+    color: black;
+    text-align: center;
+}
+
+.header {
+    text-align: center;
+}

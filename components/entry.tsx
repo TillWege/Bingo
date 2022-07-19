@@ -5,21 +5,14 @@ import { FC } from "react";
 
 const Entry: FC<BingoField> = (props) => {
 
-  function getContext(){
-    if(props.context !== ''){
-      return(<><p>{props.context}</p><br></br></>)
-    }else{
-      return <></>
-    }
-  }
-
   return (
-    <Collapse title={props.name}>
-    <Text>
-      {getContext()}
-      von {props.author}
-    </Text>
-  </Collapse>
+    <Collapse title={props.name} key={props.id}>
+      <Text>
+        Kontext: {props.context}
+        <br></br>
+        von {props.author}
+      </Text>
+    </Collapse>
   );
 };
 
