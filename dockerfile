@@ -2,9 +2,9 @@ FROM tarampampam/node:latest
 
 RUN git clone https://github.com/TillWege/Bingo.git
 
-WORKDIR /bingo
+WORKDIR /Bingo
 
-ADD .env.local /bingo/
+ADD .env.local /Bingo/
 
 RUN npm install
 
